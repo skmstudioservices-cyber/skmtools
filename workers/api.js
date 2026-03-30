@@ -3,7 +3,7 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // 🛡️ ADMIN ENDPOINT
+    // 🛡️ 1. ADMIN ENDPOINT
     if (path === "/admin") {
       const providedKey = url.searchParams.get('key');
       const adminKey = env.ADMIN_KEY || "skmtools-admin-secret-key-2026";
@@ -14,29 +14,50 @@ export default {
           headers: { "Content-Type": "application/json" }
         });
       }
+
+      // Check DB connectivity for admin
+      const dbStatus = await env.DB.prepare("SELECT 1").first();
+      
       return new Response(JSON.stringify({ 
         "Message": "Welcome to SKMTools Admin Panel", 
-        "Status": "System Online" 
+        "Database": dbStatus ? "Connected" : "Error",
+        "Environment": env.ENVIRONMENT || "production"
       }, null, 2), { headers: { "Content-Type": "application/json" } });
     }
 
-    // 📋 PRICES ENDPOINT
+    // 📋 2. PRICES ENDPOINT (Real D1 Database Query)
     if (path === "/prices") {
-      const prices = { "Basic": "$9.99", "Pro": "$29.99", "Enterprise": "$99.99" };
-      return new Response(JSON.stringify(prices, null, 2), {
-        headers: { "Content-Type": "application/json" }
-      });
+      try {
+        const { results } = await env.DB.prepare("SELECT * FROM prices").all();
+        return new Response(JSON.stringify(results, null, 2), {
+          headers: { "Content-Type": "application/json" }
+        });
+      } catch (err) {
+        return new Response(JSON.stringify({ "Error": "Database Query Failed", "Details": err.message }), { status: 500 });
+      }
     }
 
-    // 📊 STATS ENDPOINT
+    // 📊 3. STATS ENDPOINT
     if (path === "/stats") {
-      const stats = { "Users": 1245, "Active_Workers": 3, "Uptime": "99.9%" };
+      const userCount = await env.DB.prepare("SELECT count(*) as total FROM users").first("total");
+      const stats = { 
+        "Registered_Users": userCount || 0,
+        "System_Uptime": "99.99%",
+        "Last_Audit": new Date().toISOString()
+      };
       return new Response(JSON.stringify(stats, null, 2), {
         headers: { "Content-Type": "application/json" }
       });
     }
 
+    // 🚀 4. AI ENDPOINT (Optional Extra)
+    if (path === "/ai-suggest") {
+      const prompt = url.searchParams.get('prompt') || "Give me a coding tip";
+      const response = await env.AI.run('@cf/meta/llama-2-7b-chat-int8', { prompt });
+      return new Response(JSON.stringify(response), { headers: { "Content-Type": "application/json" } });
+    }
+
     // Default 404
-    return new Response("SKMTools Endpoint Not Found", { status: 404 });
+    return new Response("SKMTools API: Route not found. Try /prices or /stats", { status: 404 });
   }
 };
