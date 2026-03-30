@@ -5,7 +5,7 @@ compatibility_date = "2026-03-30"
 [[d1_databases]]
 binding = "DB"
 database_name = "skmtools-db"
-database_id = "f6e8d2c1-b4a5-4e3f-9a7b-8c6d5e4f3a2b" # 💡 Placeholder ID
+database_id = "7aef892a-7324-4ccf-ba7f-c1adbe0c9b24"
 
 [ai]
 binding = "AI"
