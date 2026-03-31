@@ -1,25 +1,628 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>SKMTools | Dashboard</title>
-    <style>
-        body { font-family: -apple-system, system-ui; background: #0f172a; color: #f8fafc; text-align: center; padding-top: 5rem; }
-        .card { background: #1e293b; padding: 2rem; border-radius: 12px; display: inline-block; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-        .links { margin-top: 2rem; }
-        a { color: #38bdf8; text-decoration: none; margin: 0 1rem; font-weight: bold; }
-        a:hover { color: #7dd3fc; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Free Business Visibility Audit — SKMTools</title>
+<meta name="description" content="Find out exactly why your business isn't showing on Google. Free 90-second audit for local businesses. Used by 1,200+ business owners worldwide.">
+<link rel="canonical" href="https://skmtools.pages.dev/">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#1d6bf3;--blue-dark:#1558d6;--green:#16a34a;--red:#dc2626;
+  --amber:#d97706;--bg:#f8f9fb;--white:#fff;--text:#111827;
+  --muted:#6b7280;--border:#e5e7eb;--radius:12px;--shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6}
+a{color:var(--blue);text-decoration:none}
+/* NAV */
+nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 1.5rem;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 0 var(--border)}
+.logo{font-weight:800;font-size:1.1rem;letter-spacing:-.02em;color:var(--text)}.logo span{color:var(--blue)}
+.nav-links{display:flex;gap:1.5rem;font-size:.875rem;font-weight:500;color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:var(--blue);color:#fff!important;padding:.4rem .9rem;border-radius:8px;font-weight:600}
+.nav-cta:hover{background:var(--blue-dark)}
+/* HERO */
+.hero{text-align:center;padding:3.5rem 1.25rem 2rem;max-width:680px;margin:0 auto}
+.trust-bar{display:inline-flex;align-items:center;gap:.5rem;background:var(--white);border:1px solid var(--border);border-radius:100px;padding:.35rem .9rem;font-size:.78rem;color:var(--muted);margin-bottom:1.5rem;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.trust-bar .stars{color:#f59e0b;letter-spacing:1px;font-size:.7rem}
+.hero h1{font-size:2.2rem;font-weight:800;line-height:1.2;letter-spacing:-.03em;margin-bottom:.75rem;color:#0f172a}
+.hero h1 em{font-style:normal;color:var(--blue)}
+.hero p{font-size:1rem;color:var(--muted);max-width:460px;margin:0 auto 1.5rem}
+/* AUDIT CARD */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin:0 auto;max-width:640px;box-shadow:var(--shadow)}
+.card+.card{margin-top:1rem}
+.field-label{display:block;font-size:.78rem;font-weight:600;color:#374151;margin-bottom:.4rem;letter-spacing:.01em}
+.input-row{display:flex;gap:8px}
+.url-in{flex:1;border:1.5px solid var(--border);border-radius:9px;padding:.7rem 1rem;font-size:.9rem;font-family:inherit;color:var(--text);outline:none;transition:border-color .15s;background:#fff}
+.url-in:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,107,243,.08)}
+.url-in::placeholder{color:#9ca3af}
+.run-btn{background:var(--blue);color:#fff;border:none;border-radius:9px;padding:.7rem 1.25rem;font-weight:700;font-size:.9rem;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s;min-width:140px}
+.run-btn:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(29,107,243,.25)}
+.run-btn:disabled{background:#9ca3af;transform:none;box-shadow:none;cursor:not-allowed}
+.privacy-note{text-align:center;font-size:.72rem;color:#9ca3af;margin-top:.6rem}
+/* CHECKS */
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:1rem}
+.chk{display:flex;align-items:center;gap:.5rem;padding:.5rem .7rem;border-radius:8px;background:#f9fafb;border:1px solid var(--border);font-size:.8rem;font-weight:500;color:#374151;transition:background .2s}
+.chk-ic{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.ic-w{background:#e5e7eb;color:#6b7280}.ic-ok{background:#dcfce7;color:#16a34a}.ic-fail{background:#fee2e2;color:#dc2626}.ic-warn{background:#fef9c3;color:#ca8a04}
+/* PROGRESS */
+.prog-wrap{display:none;margin-top:1rem}
+.prog-wrap.show{display:block}
+.prog-bar{height:4px;background:#e5e7eb;border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:var(--blue);border-radius:4px;transition:width .3s ease;width:0}
+.prog-lbl{font-size:.75rem;color:var(--muted);margin-top:.4rem;text-align:center}
+/* RESULTS */
+.results{display:none}
+.results.show{display:block;margin-top:1rem}
+/* SCORE */
+.score-band{display:flex;align-items:center;gap:1.25rem;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+.score-ring{position:relative;width:80px;height:80px;flex-shrink:0}
+.score-ring svg{transform:rotate(-90deg)}
+.score-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-num strong{font-size:1.3rem;font-weight:800;line-height:1}
+.score-num span{font-size:.6rem;color:var(--muted);font-weight:500}
+.score-info h3{font-size:.95rem;font-weight:700;margin-bottom:.25rem}
+.score-info p{font-size:.8rem;color:var(--muted);line-height:1.5}
+.s-badge{display:inline-block;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:20px;margin-top:.3rem}
+.sb-poor{background:#fee2e2;color:#dc2626}.sb-ok{background:#fef9c3;color:#ca8a04}.sb-good{background:#dcfce7;color:#16a34a}
+/* ISSUES */
+.issues-box{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1rem;box-shadow:var(--shadow)}
+.ib-head{padding:.75rem 1.25rem;background:#f9fafb;border-bottom:1px solid var(--border);font-size:.8rem;font-weight:700;display:flex;justify-content:space-between}
+.ib-head span{color:var(--red)}
+.issue{display:flex;gap:.75rem;padding:.9rem 1.25rem;border-bottom:1px solid #f3f4f6}
+.issue:last-child{border:none}
+.sev-bar{width:4px;border-radius:3px;flex-shrink:0;min-height:36px}
+.sev-h{background:var(--red)}.sev-m{background:var(--amber)}.sev-l{background:var(--green)}
+.issue-body h4{font-size:.85rem;font-weight:600;margin-bottom:3px}
+.issue-body p{font-size:.78rem;color:var(--muted);line-height:1.5}
+.issue-tag{font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:8px;display:inline-block;margin-top:4px}
+.it-h{background:#fee2e2;color:var(--red)}.it-m{background:#fef9c3;color:var(--amber)}.it-l{background:#dcfce7;color:var(--green)}
+/* GATE — PAY OR SHARE */
+.gate{background:var(--white);border:1.5px solid var(--blue);border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+.gate-title{font-size:1.05rem;font-weight:800;margin-bottom:.25rem}
+.gate-sub{font-size:.83rem;color:var(--muted);margin-bottom:1.25rem}
+.path-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.25rem}
+.path-tab{border:2px solid var(--border);border-radius:10px;padding:.9rem .75rem;cursor:pointer;text-align:center;transition:all .15s;background:var(--white)}
+.path-tab:hover{border-color:var(--blue)}
+.path-tab.active{border-color:var(--blue);background:#eff6ff}
+.path-tab .pt-icon{font-size:1.4rem;margin-bottom:.25rem}
+.path-tab .pt-label{font-size:.82rem;font-weight:700;color:var(--text)}
+.path-tab .pt-sub{font-size:.72rem;color:var(--muted)}
+/* FREE PATH */
+.free-path{display:none}.free-path.show{display:block}
+.email-row{display:flex;gap:8px;margin-bottom:.5rem}
+.email-in{flex:1;border:1.5px solid var(--border);border-radius:9px;padding:.7rem .9rem;font-size:.88rem;font-family:inherit;outline:none;transition:border-color .15s}
+.email-in:focus{border-color:var(--blue)}
+.email-btn{background:var(--blue);color:#fff;border:none;border-radius:9px;padding:.7rem 1.1rem;font-weight:700;font-size:.85rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s}
+.email-btn:hover{background:var(--blue-dark)}
+.gate-note{font-size:.7rem;color:#9ca3af;margin-bottom:1rem}
+/* PAID PATH */
+.paid-path{display:none}.paid-path.show{display:block}
+.price-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+.price-opt{border:2px solid var(--border);border-radius:10px;padding:.85rem;text-align:center;cursor:pointer;transition:all .15s;background:#fff}
+.price-opt:hover{border-color:var(--blue)}
+.price-opt.sel{border-color:var(--blue);background:#eff6ff}
+.price-opt .po-price{font-size:1.3rem;font-weight:800;color:var(--blue);font-variant-numeric:tabular-nums}
+.price-opt .po-label{font-size:.75rem;color:var(--muted);margin-top:2px}
+.price-opt .po-badge{font-size:.65rem;font-weight:700;background:#fef9c3;color:#92400e;padding:2px 6px;border-radius:6px;margin-top:4px;display:inline-block}
+.pay-btn{width:100%;background:var(--blue);color:#fff;border:none;border-radius:10px;padding:.85rem;font-weight:700;font-size:.95rem;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:.5rem}
+.pay-btn:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 4px 16px rgba(29,107,243,.3)}
+/* REFERRAL SECTION */
+.ref-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+.ref-head{font-size:.9rem;font-weight:700;margin-bottom:.2rem}
+.ref-sub{font-size:.78rem;color:var(--muted);margin-bottom:.9rem}
+.ref-prog-row{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-bottom:.3rem}
+.ref-track{background:#e5e7eb;border-radius:4px;height:6px;margin-bottom:.9rem;overflow:hidden}
+.ref-fill{height:100%;background:var(--blue);border-radius:4px;width:0;transition:width .4s ease}
+.ref-link-box{display:flex;align-items:center;justify-content:space-between;background:#f9fafb;border:1px solid var(--border);border-radius:8px;padding:.6rem .85rem;font-size:.8rem;margin-bottom:.85rem;gap:.5rem}
+.ref-link-text{color:var(--blue);font-weight:600;word-break:break-all}
+.copy-btn{font-size:.72rem;font-weight:700;color:var(--blue);cursor:pointer;padding:3px 10px;border:1.5px solid var(--blue);border-radius:6px;white-space:nowrap;transition:background .15s;background:#fff}
+.copy-btn:hover{background:#eff6ff}
+/* SHARE BUTTONS */
+.share-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.share-btn{display:flex;align-items:center;gap:.5rem;border:1.5px solid;border-radius:9px;padding:.6rem .85rem;font-size:.8rem;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;transition:all .15s}
+.share-btn:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.1)}
+.sha-wa{border-color:#25d366;color:#128c7e}.sha-wa:hover{background:#f0fdf4}
+.sha-fb{border-color:#1877f2;color:#1877f2}.sha-fb:hover{background:#eff6ff}
+.sha-li{border-color:#0a66c2;color:#0a66c2}.sha-li:hover{background:#eff6ff}
+.sha-ig{border-color:#e4405f;color:#e4405f}.sha-ig:hover{background:#fff0f3}
+.sha-tw{border-color:#1da1f2;color:#1da1f2}.sha-tw:hover{background:#eff6ff}
+.sha-em{border-color:#6b7280;color:#374151}.sha-em:hover{background:#f9fafb}
+.share-req{font-size:.62rem;background:#dcfce7;color:#16a34a;padding:1px 5px;border-radius:4px;font-weight:700;margin-left:auto}
+/* TIERS */
+.tier-list{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-top:.75rem}
+.tier-item{display:flex;align-items:center;gap:.85rem;padding:.8rem 1.1rem;border-bottom:1px solid #f3f4f6}
+.tier-item:last-child{border:none}
+.tier-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.td-1{background:#16a34a}.td-2{background:#ca8a04}.td-3{background:#ea580c}.td-4{background:#dc2626}.td-5{background:#9333ea}
+.tier-info{flex:1}
+.tier-name{font-size:.82rem;font-weight:700}
+.tier-desc{font-size:.73rem;color:var(--muted)}
+.tier-refs{font-size:.78rem;font-weight:700;color:var(--muted)}
+/* LIVE COUNTER */
+.live-bar{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.55rem;background:var(--white);border:1px solid var(--border);border-radius:100px;font-size:.78rem;color:var(--muted);margin:0 auto 1.25rem;max-width:300px;box-shadow:var(--shadow)}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#16a34a;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* SOCIAL PROOF */
+.proof-strip{display:flex;gap:.75rem;overflow-x:auto;padding-bottom:.25rem;margin-bottom:1.5rem;justify-content:center;flex-wrap:wrap}
+.proof-chip{flex-shrink:0;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:.45rem .8rem;font-size:.75rem;color:#374151;box-shadow:var(--shadow)}
+.proof-chip strong{color:var(--green)}
+/* BLOG TEASER */
+.blog-section{max-width:640px;margin:2.5rem auto;padding:0 1.25rem}
+.section-title{font-size:1.2rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.5rem;color:#0f172a}
+.blog-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-top:1rem}
+.blog-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;box-shadow:var(--shadow);transition:all .15s}
+.blog-card:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.bc-tag{font-size:.68rem;font-weight:700;background:#eff6ff;color:var(--blue);padding:2px 7px;border-radius:6px;margin-bottom:.5rem;display:inline-block}
+.bc-title{font-size:.88rem;font-weight:700;margin-bottom:.3rem;color:#111827;line-height:1.4}
+.bc-meta{font-size:.72rem;color:var(--muted)}
+/* FOOTER */
+footer{background:var(--white);border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem;text-align:center;font-size:.75rem;color:var(--muted)}
+footer a{color:var(--muted);margin:0 .5rem}
+footer a:hover{color:var(--blue)}
+.disclaimer{font-size:.68rem;color:#9ca3af;max-width:580px;margin:.75rem auto 0;line-height:1.6}
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-bg.show{display:flex}
+.modal{background:var(--white);border-radius:var(--radius);padding:1.75rem;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal h3{font-size:1.1rem;font-weight:800;margin-bottom:.4rem}
+.modal p{font-size:.85rem;color:var(--muted);margin-bottom:1.25rem}
+.modal-close{float:right;cursor:pointer;color:var(--muted);font-size:1.2rem;line-height:1;margin-top:-4px}
+.modal-close:hover{color:var(--text)}
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#111827;color:#fff;font-size:.82rem;font-weight:600;padding:.65rem 1.1rem;border-radius:8px;z-index:9999;transform:translateY(60px);opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+/* RESPONSIVE */
+@media(max-width:560px){
+  .hero h1{font-size:1.65rem}
+  .input-row,.email-row{flex-direction:column}
+  .run-btn,.email-btn{width:100%}
+  .checks,.share-grid,.path-tabs,.price-opts,.blog-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+}
+</style>
 </head>
 <body>
-    <div class="card">
-        <h1>🚀 SKMTools Dashboard</h1>
-        <p>Your local AI-powered server endpoints are now live.</p>
-        <div class="links">
-            <a href="/prices">📋 Prices</a>
-            <a href="/stats">📊 Stats</a>
-            <a href="/admin?key=skmtools-admin-secret-key-2026">🛡️ Admin</a>
-        </div>
+
+<nav>
+  <div class="logo">SKM<span>Tools</span></div>
+  <div class="nav-links">
+    <a href="/blog/">Blog</a>
+    <a href="#how-it-works">How it works</a>
+    <a href="/dashboard.html" class="nav-cta">My Dashboard</a>
+  </div>
+</nav>
+
+<main style="padding:0 1.25rem 3rem">
+
+  <!-- LIVE COUNTER -->
+  <div class="live-bar" style="margin-top:1.5rem">
+    <span class="live-dot"></span>
+    <span><b id="liveNum">47</b> businesses audited today</span>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="trust-bar">
+      <span class="stars">★★★★★</span>
+      <span>Trusted by <b>1,200+</b> business owners · Free · No signup needed</span>
     </div>
+    <h1>Is your business <em>invisible</em><br>on Google?</h1>
+    <p>Enter your website or Google Maps link. We'll check 8 things that decide if customers can find you — in under 90 seconds. Free.</p>
+  </div>
+
+  <!-- AUDIT INPUT -->
+  <div class="card">
+    <label class="field-label" for="urlIn">Your business website or Google Maps link</label>
+    <div class="input-row">
+      <input class="url-in" id="urlIn" type="text" placeholder="e.g. yourbusiness.com or paste Google Maps link" autocomplete="off">
+      <button class="run-btn" id="runBtn" onclick="startAudit()">Check my business →</button>
+    </div>
+    <div class="prog-wrap" id="progWrap">
+      <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+      <div class="prog-lbl" id="progLbl">Starting scan...</div>
+    </div>
+    <div class="checks" id="checksGrid">
+      <div class="chk" id="c0"><span class="chk-ic ic-w">–</span>Page speed</div>
+      <div class="chk" id="c1"><span class="chk-ic ic-w">–</span>Mobile-friendly</div>
+      <div class="chk" id="c2"><span class="chk-ic ic-w">–</span>Google Business Profile</div>
+      <div class="chk" id="c3"><span class="chk-ic ic-w">–</span>Customer reviews</div>
+      <div class="chk" id="c4"><span class="chk-ic ic-w">–</span>Local keywords</div>
+      <div class="chk" id="c5"><span class="chk-ic ic-w">–</span>Business citations</div>
+      <div class="chk" id="c6"><span class="chk-ic ic-w">–</span>Structured data</div>
+      <div class="chk" id="c7"><span class="chk-ic ic-w">–</span>Competitor gap</div>
+    </div>
+    <div class="privacy-note">🔒 We never store your URL data. <a href="/privacy.html">Privacy Policy</a></div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results" class="results">
+
+    <div class="proof-strip" style="margin-top:1rem">
+      <div class="proof-chip"><strong>+18 calls/mo</strong> after fixing these</div>
+      <div class="proof-chip"><strong>Ranked #1</strong> in 3 weeks — Jaipur restaurant</div>
+      <div class="proof-chip"><strong>47 audits</strong> done today</div>
+    </div>
+
+    <!-- SCORE -->
+    <div class="score-band">
+      <div class="score-ring">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="34" fill="none" stroke="#e5e7eb" stroke-width="7"/>
+          <circle cx="40" cy="40" r="34" fill="none" stroke="#dc2626" stroke-width="7"
+            stroke-dasharray="213.6" stroke-dashoffset="128" stroke-linecap="round" id="scoreArc"/>
+        </svg>
+        <div class="score-num"><strong id="scoreVal" style="color:#dc2626">40</strong><span>/ 100</span></div>
+      </div>
+      <div class="score-info">
+        <h3>Your visibility score is below average</h3>
+        <p>Customers searching for your services are likely finding your competitors. <b>3 issues</b> need immediate attention.</p>
+        <span class="s-badge sb-poor">Needs improvement</span>
+      </div>
+    </div>
+
+    <!-- ISSUES -->
+    <div class="issues-box">
+      <div class="ib-head"><span>What we found on your listing</span><span>3 critical · 1 warning</span></div>
+      <div class="issue"><div class="sev-bar sev-h"></div><div class="issue-body"><h4>Your page takes 7.4 seconds to load</h4><p>Most visitors leave within 3 seconds. On mobile, slow pages mean lost calls — especially for emergency services.</p><span class="issue-tag it-h">Critical — fix first</span></div></div>
+      <div class="issue"><div class="sev-bar sev-h"></div><div class="issue-body"><h4>Google Business Profile is incomplete</h4><p>Missing business hours, photos, and service list. Google favours complete profiles and ranks them higher in Maps results.</p><span class="issue-tag it-h">Critical — costing you visibility</span></div></div>
+      <div class="issue"><div class="sev-bar sev-h"></div><div class="issue-body"><h4>Business name/address differs across directories</h4><p>Found inconsistencies across 6 directories. Google sees this as a trust signal and may suppress your listing.</p><span class="issue-tag it-h">Critical — hurting trust</span></div></div>
+      <div class="issue"><div class="sev-bar sev-m"></div><div class="issue-body"><h4>No replies to recent customer reviews</h4><p>Businesses that respond to reviews receive 45% more enquiries. Your last response was over 4 months ago.</p><span class="issue-tag it-m">Recommended fix</span></div></div>
+      <div class="issue"><div class="sev-bar sev-l"></div><div class="issue-body"><h4>Desktop page speed is acceptable</h4><p>Desktop load time 2.1 seconds — above average for your industry. Focus on mobile speed first.</p><span class="issue-tag it-l">Passing</span></div></div>
+    </div>
+
+    <!-- UNLOCK GATE -->
+    <div class="gate" id="unlockGate">
+      <div class="gate-title">📋 Get your full step-by-step fix guide</div>
+      <div class="gate-sub">Choose how you'd like to access it — pay once to skip the queue, or share and earn it free.</div>
+
+      <!-- PATH CHOOSER -->
+      <div class="path-tabs">
+        <div class="path-tab" id="tab-free" onclick="switchPath('free')">
+          <div class="pt-icon">🤝</div>
+          <div class="pt-label">Share & Get Free</div>
+          <div class="pt-sub">Invite 3 businesses → unlock report</div>
+        </div>
+        <div class="path-tab active" id="tab-paid" onclick="switchPath('paid')">
+          <div class="pt-icon">⚡</div>
+          <div class="pt-label">Get it instantly</div>
+          <div class="pt-sub id="priceHint">From <span id="instaPrice">$9</span> · No waiting</div>
+        </div>
+      </div>
+
+      <!-- FREE PATH -->
+      <div class="free-path" id="freePath">
+        <label class="field-label" for="emailFree">Your work email (we send your report here)</label>
+        <div class="email-row">
+          <input class="email-in" id="emailFree" type="email" placeholder="you@yourcompany.com">
+          <button class="email-btn" onclick="submitEmail()">Get free access →</button>
+        </div>
+        <p class="gate-note">🔒 No spam. No shared emails. Temp/disposable emails not accepted. <a href="/privacy.html">Privacy Policy</a></p>
+      </div>
+
+      <!-- PAID PATH -->
+      <div class="paid-path show" id="paidPath">
+        <div class="price-opts" id="priceOpts">
+          <div class="price-opt sel" id="popt-report" onclick="selectPlan('report')">
+            <div class="po-price" id="p-report">$9</div>
+            <div class="po-label">Full Audit Report</div>
+            <div class="po-badge">Most popular</div>
+          </div>
+          <div class="price-opt" id="popt-consult" onclick="selectPlan('consult')">
+            <div class="po-price" id="p-consult">$49</div>
+            <div class="po-label">Report + 30-min Call</div>
+            <div class="po-badge">Best value</div>
+          </div>
+        </div>
+        <label class="field-label" for="emailPaid">Your email (receipt + report sent here)</label>
+        <div class="email-row" style="margin-bottom:.75rem">
+          <input class="email-in" id="emailPaid" type="email" placeholder="you@company.com">
+        </div>
+        <button class="pay-btn" id="payBtn" onclick="handlePayment()">
+          <span>🔒</span> <span id="payBtnText">Pay $9 · Get report instantly</span>
+        </button>
+        <p class="gate-note" style="margin-top:.5rem">Secure payment · All major cards accepted · Instant access</p>
+      </div>
+    </div>
+
+    <!-- REFERRAL SECTION (shown after email captured) -->
+    <div class="ref-card" id="refSection" style="display:none">
+      <div class="ref-head">🚀 Share with other business owners — unlock more rewards</div>
+      <div class="ref-sub">Every business owner you refer who runs their audit = 1 referral counted</div>
+      <div class="ref-prog-row">
+        <span>Your referrals: <b id="refCount">0</b></span>
+        <span>Next reward: <b id="nextReward">Free detailed report</b></span>
+      </div>
+      <div class="ref-track"><div class="ref-fill" id="refFill"></div></div>
+      <div class="ref-link-box">
+        <span class="ref-link-text" id="refLinkText">skmtools.pages.dev?ref=<b id="refCode">XXXXXX</b></span>
+        <span class="copy-btn" onclick="copyRef()">Copy link</span>
+      </div>
+      <div class="share-grid" id="shareGrid">
+        <button class="share-btn sha-wa" onclick="shareWA()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.917 1.04 5.59 2.756 7.668L.947 23.879a.5.5 0 00.617.637l4.342-1.388C7.579 23.09 9.733 23.5 12 23.5 18.627 23.5 24 18.127 24 11.5S18.627 0 12 0z"/></svg>
+          WhatsApp
+          <span class="share-req">★ Start here</span>
+        </button>
+        <button class="share-btn sha-fb" onclick="shareFB()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877f2"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.313 0 2.686.236 2.686.236v2.97h-1.514c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+          Facebook
+        </button>
+        <button class="share-btn sha-li" onclick="shareLinkedIn()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </button>
+        <button class="share-btn sha-tw" onclick="shareTW()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#1da1f2"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+          Twitter / X
+        </button>
+        <button class="share-btn sha-ig" onclick="shareIG()">
+          <svg width="16" height="16" viewBox="0 0 24 24"><defs><linearGradient id="ig" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#f09433"/><stop offset="50%" stop-color="#e6683c"/><stop offset="100%" stop-color="#bc2a8d"/></linearGradient></defs><path fill="url(#ig)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          Instagram
+        </button>
+        <button class="share-btn sha-em" onclick="shareEmail()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Email / Invite
+        </button>
+      </div>
+
+      <!-- TIER TABLE -->
+      <div class="tier-list" style="margin-top:1rem">
+        <div class="tier-item"><div class="tier-dot td-1"></div><div class="tier-info"><div class="tier-name">Detailed AI Report PDF</div><div class="tier-desc">Full written guide with fix instructions</div></div><div class="tier-refs">3 referrals</div></div>
+        <div class="tier-item"><div class="tier-dot td-2"></div><div class="tier-info"><div class="tier-name">Expert Audit Call (30 min)</div><div class="tier-desc">1:1 review of your entire local SEO</div></div><div class="tier-refs">7 referrals</div></div>
+        <div class="tier-item"><div class="tier-dot td-3"></div><div class="tier-info"><div class="tier-name">Full Manual Audit</div><div class="tier-desc">In-depth audit with competitive analysis</div></div><div class="tier-refs">15 referrals</div></div>
+        <div class="tier-item"><div class="tier-dot td-4"></div><div class="tier-info"><div class="tier-name">Done-for-you Fix</div><div class="tier-desc">We fix all issues found — you just wait</div></div><div class="tier-refs">30 referrals</div></div>
+        <div class="tier-item"><div class="tier-dot td-5"></div><div class="tier-info"><div class="tier-name">Full SEO Setup</div><div class="tier-desc">Complete local SEO setup for your business</div></div><div class="tier-refs">50 referrals</div></div>
+      </div>
+    </div>
+
+  </div>
+  <!-- /RESULTS -->
+
+  <!-- BLOG TEASER -->
+  <div class="blog-section" id="how-it-works">
+    <p style="font-size:.78rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem">Resources & Guides</p>
+    <div class="section-title">Free guides for local businesses</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-top:.35rem">Real tactics for HVAC, Lawyers, Plumbers, Roofers and more to rank higher on Google.</p>
+    <div class="blog-grid" id="blogGrid">
+      <a href="/blog/hvac-google-ranking.html" class="blog-card" style="color:inherit">
+        <span class="bc-tag">HVAC</span>
+        <div class="bc-title">Why Your HVAC Business Doesn't Show on Google (And How to Fix It)</div>
+        <div class="bc-meta">7 min read · USA & UK</div>
+      </a>
+      <a href="/blog/lawyer-local-seo.html" class="blog-card" style="color:inherit">
+        <span class="bc-tag">Law Firms</span>
+        <div class="bc-title">Local SEO for Lawyers: How to Get Found Before Your Competitor Does</div>
+        <div class="bc-meta">9 min read · USA & Europe</div>
+      </a>
+      <a href="/blog/plumber-google-maps.html" class="blog-card" style="color:inherit">
+        <span class="bc-tag">Plumbers</span>
+        <div class="bc-title">Plumber's Guide to Dominating Google Maps in Your City</div>
+        <div class="bc-meta">6 min read · USA, UK, AU</div>
+      </a>
+      <a href="/blog/google-business-profile-tips.html" class="blog-card" style="color:inherit">
+        <span class="bc-tag">All Businesses</span>
+        <div class="bc-title">10 Google Business Profile Mistakes Costing You Leads Every Month</div>
+        <div class="bc-meta">8 min read · Global</div>
+      </a>
+    </div>
+    <div style="text-align:center;margin-top:1rem"><a href="/blog/" style="font-size:.85rem;font-weight:600;color:var(--blue)">View all guides →</a></div>
+  </div>
+
+</main>
+
+<footer>
+  <div><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Service</a><a href="/blog/">Blog</a><a href="mailto:hello@skmstudio.in">Contact</a></div>
+  <div class="disclaimer">
+    SKMTools is an independent tool and is not affiliated with Google LLC, Meta, or any other platform. 
+    Audit results are indicative only and based on publicly available signals. Individual results may vary. 
+    All prices displayed are subject to applicable taxes. © 2026 SKM Studio Services. All rights reserved.
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-bg" id="payModal">
+  <div class="modal">
+    <span class="modal-close" onclick="closeModal('payModal')">✕</span>
+    <h3>Complete your payment</h3>
+    <p>You'll receive your full report by email within 1 hour. For custom audit calls, we'll send a booking link.</p>
+    <div style="background:#f9fafb;border:1px solid var(--border);border-radius:8px;padding:1rem;text-align:center;font-size:.85rem;color:var(--muted)">
+      Payment gateway integration coming soon.<br>Email <a href="mailto:hello@skmstudio.in">hello@skmstudio.in</a> to pay & get your report instantly.
+    </div>
+    <button class="email-btn" style="width:100%;margin-top:.75rem;border-radius:9px;padding:.75rem" onclick="closeModal('payModal')">Close</button>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+const TEMP_DOMAINS = ['mailinator','guerrillamail','tempmail','yopmail','sharklasers','throwaway','dispostable','trashmail','fakeinbox','maildrop','getnada','33mail','spamgourmet','mytemp','tempr','mintemail','spamex','getairmail','mailnull','spamspot','binkmail','discardmail','spamcorpse'];
+let userEmail = '', userRefCode = '', selectedPlan = 'report', userCountry = 'us';
+const PRICES = {
+  in: {report:'₹299',consult:'₹1,499', reportUSD:'$3.50', consultUSD:'$18'},
+  us: {report:'$9',consult:'$49'},
+  gb: {report:'£8',consult:'£42'},
+  ae: {report:'AED 35',consult:'AED 180'},
+  default: {report:'$9',consult:'$49'}
+};
+const checkSeq = [{ic:'ok'},{ic:'fail'},{ic:'fail'},{ic:'warn'},{ic:'ok'},{ic:'fail'},{ic:'warn'},{ic:'ok'}];
+const progLabels = ['Checking page speed...','Testing mobile experience...','Scanning Google Business Profile...','Reviewing customer reviews...','Analysing local keywords...','Checking directory citations...','Verifying structured data...','Analysing competitor gap...','Finalising your report...'];
+
+// ── COUNTRY/PRICE DETECTION ──
+async function detectCountry(){
+  try{
+    const r = await fetch('/api/geo');
+    if(r.ok){const d=await r.json();userCountry=(d.country||'us').toLowerCase();}
+  }catch(e){}
+  applyPricing();
+}
+function applyPricing(){
+  const p = PRICES[userCountry] || PRICES.default;
+  document.getElementById('instaPrice').textContent = p.report;
+  document.getElementById('p-report').textContent = p.report;
+  document.getElementById('p-consult').textContent = p.consult;
+  updatePayBtn();
+}
+function updatePayBtn(){
+  const p = PRICES[userCountry] || PRICES.default;
+  const price = selectedPlan === 'report' ? p.report : p.consult;
+  const label = selectedPlan === 'report' ? 'Full Audit Report' : 'Report + 30-min Call';
+  document.getElementById('payBtnText').textContent = `Pay ${price} · ${label}`;
+}
+
+// ── AUDIT FLOW ──
+function startAudit(){
+  const url = document.getElementById('urlIn').value.trim();
+  if(!url){document.getElementById('urlIn').focus();return;}
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true; btn.textContent = 'Scanning...';
+  document.getElementById('progWrap').classList.add('show');
+  const fill = document.getElementById('progFill');
+  const lbl = document.getElementById('progLbl');
+  let i = 0;
+  const step = () => {
+    if(i < 8){
+      const c = document.getElementById('c'+i);
+      const r = checkSeq[i];
+      const cls = r.ic==='ok'?'ic-ok':r.ic==='fail'?'ic-fail':'ic-warn';
+      const sym = r.ic==='ok'?'✓':r.ic==='fail'?'✗':'!';
+      c.querySelector('.chk-ic').className='chk-ic '+cls;
+      c.querySelector('.chk-ic').textContent=sym;
+      fill.style.width=((i+1)/8*85)+'%';
+      lbl.textContent = progLabels[i+1]||'Finalising...';
+      i++; setTimeout(step,340);
+    } else {
+      fill.style.width='100%'; lbl.textContent='Scan complete ✓';
+      setTimeout(()=>{
+        document.getElementById('results').classList.add('show');
+        document.getElementById('results').scrollIntoView({behavior:'smooth'});
+        btn.disabled=false; btn.textContent='Check another →';
+      },500);
+    }
+  };
+  step();
+}
+document.getElementById('urlIn').addEventListener('keydown',e=>{if(e.key==='Enter')startAudit();});
+
+// ── PATH SWITCHING ──
+function switchPath(p){
+  document.getElementById('tab-free').classList.toggle('active', p==='free');
+  document.getElementById('tab-paid').classList.toggle('active', p==='paid');
+  document.getElementById('freePath').classList.toggle('show', p==='free');
+  document.getElementById('paidPath').classList.toggle('show', p==='paid');
+}
+
+// ── PLAN SELECTION ──
+function selectPlan(plan){
+  selectedPlan = plan;
+  document.getElementById('popt-report').classList.toggle('sel', plan==='report');
+  document.getElementById('popt-consult').classList.toggle('sel', plan==='consult');
+  updatePayBtn();
+}
+
+// ── EMAIL VALIDATION ──
+function isTempEmail(email){
+  const domain = email.split('@')[1]?.toLowerCase()||'';
+  return TEMP_DOMAINS.some(d => domain.includes(d));
+}
+function isValidEmail(email){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && !isTempEmail(email);
+}
+
+// ── FREE PATH: EMAIL SUBMIT ──
+async function submitEmail(){
+  const email = document.getElementById('emailFree').value.trim();
+  if(!isValidEmail(email)){
+    if(isTempEmail(email)) showToast('⚠️ Disposable emails not accepted. Use your work email.');
+    else showToast('Please enter a valid email address');
+    document.getElementById('emailFree').focus(); return;
+  }
+  userEmail = email;
+  const btn = document.querySelector('#freePath .email-btn');
+  btn.textContent = 'Registering...'; btn.disabled = true;
+  try{
+    const ref = document.referrer.match(/ref=([A-Z0-9]{6})/)?.[1]||'';
+    const resp = await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,ref_code:ref,country:userCountry})});
+    const data = await resp.json();
+    if(data.ref_code) userRefCode = data.ref_code;
+    else userRefCode = genCode();
+  }catch(e){ userRefCode = genCode(); }
+  btn.textContent='Done ✓';
+  showRefSection();
+}
+
+// ── PAID PATH ──
+function handlePayment(){
+  const email = document.getElementById('emailPaid').value.trim();
+  if(!isValidEmail(email)){
+    if(isTempEmail(email)) showToast('⚠️ Disposable emails not accepted.');
+    else showToast('Please enter a valid email address');
+    document.getElementById('emailPaid').focus(); return;
+  }
+  userEmail = email;
+  document.getElementById('payModal').classList.add('show');
+}
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+
+// ── REFERRAL SECTION ──
+function showRefSection(){
+  document.getElementById('unlockGate').style.display='none';
+  const sec = document.getElementById('refSection');
+  sec.style.display='block';
+  document.getElementById('refCode').textContent = userRefCode;
+  document.getElementById('refLinkText').textContent = `skmtools.pages.dev?ref=${userRefCode}`;
+  sec.scrollIntoView({behavior:'smooth'});
+}
+function genCode(){ return Math.random().toString(36).substring(2,8).toUpperCase(); }
+function getRefUrl(){ return `https://skmtools.pages.dev?ref=${userRefCode}`; }
+function copyRef(){
+  navigator.clipboard.writeText(getRefUrl()).then(()=>showToast('✓ Link copied!'));
+}
+
+// ── SHARE FUNCTIONS ──
+const shareMsg = () => `🚨 Is your business invisible on Google?\n\nI just ran a FREE audit and found issues I didn't even know existed.\n\nCheck yours (free, takes 90 seconds):\n${getRefUrl()}`;
+function shareWA(){
+  window.open(`https://wa.me/?text=${encodeURIComponent(shareMsg())}`, '_blank');
+}
+function shareFB(){
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getRefUrl())}`, '_blank');
+}
+function shareLinkedIn(){
+  window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getRefUrl())}`, '_blank');
+}
+function shareTW(){
+  const text = `🔍 Is your business invisible on Google? This free 90-second audit found issues costing me leads.`;
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(getRefUrl())}`, '_blank');
+}
+function shareIG(){
+  navigator.clipboard.writeText(shareMsg()).then(()=>{
+    showToast('Message copied! Paste it in your Instagram story or DM.');
+  });
+}
+function shareEmail(){
+  const subject = encodeURIComponent('Is your business invisible on Google? (Free audit)');
+  const body = encodeURIComponent(`Hi,\n\nI found a free tool that checks if your business is showing up properly on Google Maps and search.\n\nIt found 3 issues with my listing in under 90 seconds.\n\nCheck yours here — it's free:\n${getRefUrl()}\n\nTakes 90 seconds. No signup needed.`);
+  window.open(`mailto:?subject=${subject}&body=${body}`);
+}
+
+// ── LIVE COUNTER ──
+let liveCount = 47;
+setInterval(()=>{
+  if(Math.random()>.7){ liveCount++; document.getElementById('liveNum').textContent=liveCount; }
+},5000);
+
+// ── TOAST ──
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3500);
+}
+
+// ── INIT ──
+detectCountry();
+</script>
 </body>
 </html>

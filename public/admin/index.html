@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SKMTools Admin</title>
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f172a;--surface:#1e293b;--card:#253047;--border:#334155;--accent:#1d6bf3;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;--text:#f1f5f9;--muted:#94a3b8}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+/* LOGIN */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1.5rem}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;width:100%;max-width:360px}
+.login-logo{font-size:1.2rem;font-weight:800;margin-bottom:.25rem}.login-logo span{color:var(--accent)}
+.login-sub{font-size:.8rem;color:var(--muted);margin-bottom:1.75rem}
+.f-label{font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.03em;display:block;margin-bottom:.4rem;text-transform:uppercase}
+.f-in{width:100%;background:var(--bg);border:1.5px solid var(--border);color:var(--text);border-radius:8px;padding:.65rem .85rem;font-size:.9rem;font-family:inherit;outline:none;margin-bottom:1rem;transition:border-color .15s}
+.f-in:focus{border-color:var(--accent)}
+.f-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:.7rem;font-weight:700;font-size:.9rem;cursor:pointer;font-family:inherit;transition:all .15s}
+.f-btn:hover{opacity:.9}
+.login-err{font-size:.78rem;color:var(--red);margin-bottom:.75rem;display:none}
+/* APP */
+.app{display:none;min-height:100vh}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.h-logo{font-weight:800;font-size:1rem}.h-logo span{color:var(--accent)}
+.h-right{display:flex;align-items:center;gap:.75rem;font-size:.8rem;color:var(--muted)}
+.role-badge{background:rgba(29,107,243,.15);color:var(--accent);border:1px solid rgba(29,107,243,.3);padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:700;text-transform:uppercase}
+.logout-btn{cursor:pointer;color:var(--red);font-weight:600}
+.layout{display:grid;grid-template-columns:200px 1fr;min-height:calc(100vh - 56px)}
+/* SIDEBAR */
+aside{background:var(--surface);border-right:1px solid var(--border);padding:1.25rem 0}
+.nav-item{display:flex;align-items:center;gap:.6rem;padding:.6rem 1.1rem;font-size:.85rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+.nav-item.active{color:var(--text);background:rgba(29,107,243,.08);border-left-color:var(--accent)}
+/* CONTENT */
+.content{padding:1.75rem;overflow-y:auto}
+.page{display:none}.page.active{display:block}
+.page-title{font-size:1.3rem;font-weight:800;margin-bottom:.25rem;color:#f8fafc}
+.page-sub{font-size:.82rem;color:var(--muted);margin-bottom:1.5rem}
+/* STAT CARDS */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.25rem}
+.sc-label{font-size:.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.35rem}
+.sc-val{font-size:1.7rem;font-weight:800;font-variant-numeric:tabular-nums}
+.sc-val.green{color:var(--green)}.sc-val.blue{color:var(--accent)}.sc-val.amber{color:var(--amber)}
+/* TABLE */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.table-head{display:grid;padding:.65rem 1rem;background:var(--card);font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.table-row{padding:.75rem 1rem;border-top:1px solid var(--border);font-size:.82rem;display:grid;align-items:center;transition:background .1s}
+.table-row:hover{background:rgba(255,255,255,.02)}
+.badge{font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:6px}
+.bd-free{background:rgba(148,163,184,.15);color:var(--muted)}
+.bd-paid{background:rgba(34,197,94,.15);color:var(--green)}
+.bd-in{background:rgba(245,158,11,.12);color:var(--amber)}
+/* BLOG FORM */
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1rem}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.fgroup{display:flex;flex-direction:column;gap:.35rem}
+.fgroup label{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.fgroup input,.fgroup select,.fgroup textarea{background:var(--bg);border:1.5px solid var(--border);color:var(--text);border-radius:7px;padding:.6rem .85rem;font-size:.88rem;font-family:inherit;outline:none;transition:border-color .15s;width:100%}
+.fgroup input:focus,.fgroup select:focus,.fgroup textarea:focus{border-color:var(--accent)}
+.fgroup textarea{min-height:120px;resize:vertical}
+.fg-full{grid-column:1/-1}
+.submit-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:.65rem 1.25rem;font-weight:700;font-size:.88rem;cursor:pointer;font-family:inherit;transition:all .15s;margin-top:.75rem}
+.submit-btn:hover{opacity:.9}
+.status-msg{font-size:.8rem;margin-top:.5rem;display:none}
+.status-msg.ok{color:var(--green);display:block}.status-msg.err{color:var(--red);display:block}
+@media(max-width:700px){.layout{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}aside{display:none}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-wrap" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">SKM<span>Tools</span> <span style="font-weight:400;font-size:.8rem;color:var(--muted)">Admin</span></div>
+    <div class="login-sub">Secure admin access only. All actions are logged.</div>
+    <div class="login-err" id="loginErr">Invalid credentials. Try again.</div>
+    <label class="f-label" for="adminKey">Admin Key</label>
+    <input class="f-in" id="adminKey" type="password" placeholder="••••••••••••" autocomplete="off">
+    <button class="f-btn" onclick="doLogin()">Sign in →</button>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div class="app" id="adminApp">
+  <header>
+    <div class="h-logo">SKM<span>Tools</span> Admin</div>
+    <div class="h-right">
+      <span class="role-badge" id="roleBadge">superadmin</span>
+      <span class="logout-btn" onclick="logout()">Sign out</span>
+    </div>
+  </header>
+  <div class="layout">
+    <aside>
+      <div class="nav-item active" onclick="showPage('dashboard',this)">📊 Dashboard</div>
+      <div class="nav-item" onclick="showPage('leads',this)">👥 Leads</div>
+      <div class="nav-item" onclick="showPage('blog',this)">📝 Blog Posts</div>
+      <div class="nav-item" onclick="showPage('settings',this)">⚙️ Settings</div>
+    </aside>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub">Live overview of SKMTools activity</div>
+        <div class="stat-row">
+          <div class="stat-card"><div class="sc-label">Total Leads</div><div class="sc-val blue" id="statLeads">—</div></div>
+          <div class="stat-card"><div class="sc-label">Total Referrals</div><div class="sc-val green" id="statRefs">—</div></div>
+          <div class="stat-card"><div class="sc-label">Paid Users</div><div class="sc-val amber" id="statPaid">—</div></div>
+        </div>
+        <div style="color:var(--muted);font-size:.82rem">Click "Leads" to see all registered users and their referral counts.</div>
+      </div>
+
+      <!-- LEADS -->
+      <div class="page" id="page-leads">
+        <div class="page-title">Leads</div>
+        <div class="page-sub">All users registered through the audit tool</div>
+        <div class="table-wrap" id="leadsTable">
+          <div class="table-head" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr">
+            <div>Email</div><div>Ref Code</div><div>Country</div><div>Referrals</div><div>Plan</div><div>Joined</div>
+          </div>
+          <div id="leadsBody" style="font-size:.82rem;color:var(--muted);padding:1rem">Loading...</div>
+        </div>
+      </div>
+
+      <!-- BLOG -->
+      <div class="page" id="page-blog">
+        <div class="page-title">Blog Posts</div>
+        <div class="page-sub">Create and manage SEO blog posts. Published posts appear on the site.</div>
+        <div class="form-card">
+          <div class="form-grid">
+            <div class="fgroup"><label>Post Slug (URL)</label><input id="b-slug" placeholder="hvac-seo-guide-usa"></div>
+            <div class="fgroup"><label>Category</label>
+              <select id="b-cat">
+                <option>HVAC</option><option>Law Firms</option><option>Plumbers</option><option>Roofers</option>
+                <option>Dentists</option><option>Restaurants</option><option>All Businesses</option>
+              </select>
+            </div>
+            <div class="fgroup fg-full"><label>Title</label><input id="b-title" placeholder="Why HVAC Companies Don't Show on Google"></div>
+            <div class="fgroup fg-full"><label>Meta Description (155 chars max)</label><input id="b-meta" maxlength="155" placeholder="The exact reasons your HVAC business isn't ranking and how to fix it..."></div>
+            <div class="fgroup"><label>Country Target</label><input id="b-country" value="us,gb,au" placeholder="us,gb,au or global"></div>
+            <div class="fgroup"><label>Status</label>
+              <select id="b-pub"><option value="1">Published</option><option value="0">Draft</option></select>
+            </div>
+            <div class="fgroup fg-full"><label>Content (HTML or Markdown)</label><textarea id="b-content" placeholder="Write your article content here..."></textarea></div>
+          </div>
+          <button class="submit-btn" onclick="savePost()">Save Post</button>
+          <div class="status-msg" id="postStatus"></div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="page" id="page-settings">
+        <div class="page-title">Settings</div>
+        <div class="page-sub">System configuration and role management</div>
+        <div class="form-card">
+          <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem">To update admin credentials, edit the <code>admin_users</code> table in your Cloudflare D1 database dashboard. Keys are stored as hashes.</p>
+          <p style="font-size:.85rem;color:var(--muted)">Current Role: <span id="settingsRole" style="color:var(--accent);font-weight:700">—</span></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+let adminKey = '', adminRole = '';
+
+async function doLogin(){
+  const key = document.getElementById('adminKey').value.trim();
+  if(!key){ return; }
+  try{
+    const r = await fetch('/api/admin/stats', { headers: { 'x-admin-key': key } });
+    if(r.ok){
+      const d = await r.json();
+      adminKey = key;
+      adminRole = d.role || 'editor';
+      document.getElementById('loginScreen').style.display='none';
+      document.getElementById('adminApp').style.display='block';
+      document.getElementById('roleBadge').textContent = adminRole;
+      document.getElementById('settingsRole').textContent = adminRole;
+      document.getElementById('statLeads').textContent = d.total_leads || 0;
+      document.getElementById('statRefs').textContent = d.total_referrals || 0;
+      document.getElementById('statPaid').textContent = d.paid_users || 0;
+    } else {
+      document.getElementById('loginErr').style.display='block';
+    }
+  }catch(e){
+    document.getElementById('loginErr').style.display='block';
+  }
+}
+document.getElementById('adminKey').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+function logout(){
+  adminKey=''; adminRole='';
+  document.getElementById('adminApp').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('adminKey').value='';
+}
+
+function showPage(name, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  el.classList.add('active');
+  if(name==='leads') loadLeads();
+}
+
+async function loadLeads(){
+  const r = await fetch('/api/admin/leads',{headers:{'x-admin-key':adminKey}});
+  if(!r.ok){ document.getElementById('leadsBody').textContent='Error loading leads'; return; }
+  const d = await r.json();
+  const rows = (d.leads||[]).map(l => `
+    <div class="table-row" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr">
+      <div style="word-break:break-all">${l.email}</div>
+      <div style="font-family:monospace;color:var(--accent)">${l.ref_code}</div>
+      <div>${(l.country||'').toUpperCase()}</div>
+      <div>${l.referral_count||0}</div>
+      <div><span class="badge ${l.plan==='free'?'bd-free':'bd-paid'}">${l.plan||'free'}</span></div>
+      <div style="color:var(--muted)">${(l.created_at||'').split('T')[0]}</div>
+    </div>`).join('');
+  document.getElementById('leadsBody').innerHTML = rows || '<div style="padding:1rem;color:var(--muted)">No leads yet</div>';
+}
+
+async function savePost(){
+  if(adminRole !== 'superadmin'){ alert('Only superadmins can create blog posts'); return; }
+  const body = {
+    slug: document.getElementById('b-slug').value.trim(),
+    title: document.getElementById('b-title').value.trim(),
+    meta_description: document.getElementById('b-meta').value.trim(),
+    category: document.getElementById('b-cat').value,
+    country_target: document.getElementById('b-country').value.trim(),
+    content: document.getElementById('b-content').value.trim(),
+    published: parseInt(document.getElementById('b-pub').value)
+  };
+  if(!body.slug||!body.title||!body.content){ alert('Slug, title, and content are required'); return; }
+  const r = await fetch('/api/admin/blog',{method:'POST',headers:{'Content-Type':'application/json','x-admin-key':adminKey},body:JSON.stringify(body)});
+  const el = document.getElementById('postStatus');
+  if(r.ok){ el.textContent='✓ Post saved successfully'; el.className='status-msg ok'; }
+  else { el.textContent='Error saving post. Check the slug is unique.'; el.className='status-msg err'; }
+}
+</script>
+</body>
+</html>
