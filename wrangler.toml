@@ -13,3 +13,15 @@ binding = "AI"
 [vars]
 ADMIN_KEY = "skmtools-admin-secret-key-2026"
 ENVIRONMENT = "production"
+
+[observability]
+enabled = true
+
+[observability.logs]
+enabled = true
+invocation_logs = true
+head_sampling_rate = 1
+
+[observability.traces]
+enabled = true
+head_sampling_rate = 0.05
