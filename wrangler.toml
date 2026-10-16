@@ -25,3 +25,7 @@ head_sampling_rate = 1
 [observability.traces]
 enabled = true
 head_sampling_rate = 0.05
+
+[assets]
+directory = "./public"
+binding = "ASSETS"

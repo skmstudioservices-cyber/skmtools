@@ -183,6 +183,8 @@ export default {
       return json({ country, prices: prices[country] || prices.default });
     }
 
+    // Serve the static site (public/) for non-API routes; 404 only if assets miss too.
+    try { if (env && env.ASSETS) return await env.ASSETS.fetch(request); } catch (e) {}
     return new Response('SKMTools API — Route not found', { status: 404 });
   }
 };
