@@ -3,3 +3,5 @@ Allow: /
 Disallow: /admin
 
 Sitemap: https://skmtools.pages.dev/sitemap.xml
+
+# Redeployed 2026-11-18 to bring live robots.txt in sync with this file.
